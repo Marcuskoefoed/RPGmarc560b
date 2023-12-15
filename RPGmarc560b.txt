@@ -1,0 +1,126 @@
+using System;
+using System.Collections.Generic;
+
+// Base class
+abstract class Base
+{
+    public int HitPoints { get; set; }
+    public string Name { get; set; }
+
+    public Base(int hitPoints, string name)
+    {
+        HitPoints = hitPoints;
+        Name = name;
+    }
+
+    public virtual void Attack(Base target)
+    {
+        Console.WriteLine($"{Name} attacks {target.Name}!");
+    }
+
+    public virtual void Damage(int amount)
+    {
+        HitPoints -= amount;
+    }
+
+    public bool CheckIfDead()
+    {
+        return HitPoints <= 0;
+    }
+}
+
+// Player class
+class Player : Base
+{
+    public List<Equipment> EquipmentList { get; set; }
+
+    public Player(int hitPoints, string name) : base(hitPoints, name)
+    {
+        EquipmentList = new List<Equipment>();
+    }
+
+    public Player(int hitPoints, string name, List<Equipment> equipmentList) : base(hitPoints, name)
+    {
+        EquipmentList = equipmentList;
+    }
+
+    public override void Attack(Base target)
+    {
+        Console.WriteLine($"Player {Name} attacks {target.Name} [Press any key]!");
+        Console.ReadKey();
+    }
+}
+
+// NPC class
+class NPC : Base
+{
+    public enum NPCType
+    {
+        Monster,
+        Merchant,
+        Character
+        // Add more types as needed
+    }
+
+    public NPCType Type { get; set; }
+
+    public NPC(int hitPoints, string name, NPCType type) : base(hitPoints, name)
+    {
+        Type = type;
+    }
+}
+
+// Equipment class
+class Equipment
+{
+    public string Name { get; set; }
+    public int Weight { get; set; }
+
+    public Equipment(string name, int weight)
+    {
+        Name = name;
+        Weight = weight;
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        // Eksempler på instantiering af objekter af ovenstående klasser
+
+        // Base
+        // Base baseInstance = new Base(50, "BaseInstance"); // Dette er ikke tilladt, da Base er abstract.
+
+        // Player
+        Player player1 = new Player(100, "Player1");
+        Player player2 = new Player(120, "Player2", new List<Equipment> { new Equipment("Sword", 10), new Equipment("Shield", 5) });
+
+        // NPC
+        NPC npc1 = new NPC(80, "Monster1", NPC.NPCType.Monster);
+        NPC npc2 = new NPC(150, "Merchant1", NPC.NPCType.Merchant);
+
+        // Equipment
+        Equipment sword = new Equipment("Sword", 15);
+        Equipment armor = new Equipment("Plate Armor", 30);
+
+        // Eksempler på brug af metoder og egenskaber
+
+        // Player angriber NPC
+        player1.Attack(npc1);
+
+        // NPC tager skade
+        npc1.Damage(20);
+
+        // Check om NPC er død
+        if (npc1.CheckIfDead())
+            Console.WriteLine($"{npc1.Name} is dead!");
+
+        // Udskriv Player's udstyr
+        Console.WriteLine($"{player2.Name}'s Equipment:");
+        foreach (var item in player2.EquipmentList)
+        {
+            Console.WriteLine($"{item.Name} - Weight: {item.Weight}");
+        }
+    }
+}
